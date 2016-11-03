@@ -20,7 +20,12 @@ namespace Task2
         {
             this.index = index;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="firstPolinome"></param>
+        /// <param name="secondPolinome"></param>
+        /// <returns></returns>
         public static Polinome operator +(Polinome firstPolinome, Polinome secondPolinome)
         {
             int size = Math.Max(firstPolinome.Index.Length, secondPolinome.Index.Length);

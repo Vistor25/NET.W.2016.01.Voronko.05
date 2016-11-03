@@ -23,6 +23,7 @@ namespace Task1.Tests
             Polinome result = firstPolinom+secondPolinom;
 
             Assert.AreEqual(expected, result);
+            
         }
 
         [Test]
