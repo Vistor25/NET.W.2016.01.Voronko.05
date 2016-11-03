@@ -8,13 +8,8 @@ namespace Task2
 {
     public class Polinome
     {
-        private int power;
+        private int power => index.Length;
         private double[] index;
-
-        public int Power
-        {
-            get { return power; }
-        }
 
         public double[] Index
         {
@@ -24,7 +19,6 @@ namespace Task2
         public Polinome(params double[] index)
         {
             this.index = index;
-            this.power = index.Length-1;
         }
 
         public static Polinome operator +(Polinome firstPolinome, Polinome secondPolinome)
@@ -82,13 +76,13 @@ namespace Task2
 
         public static Polinome operator *(Polinome firstPolinome, Polinome secondPolinome)
         {
-            int size =firstPolinome.Power+secondPolinome.Power;
+            int size =firstPolinome.power + secondPolinome.power;
             double[] mult = new double[size];
-            if (firstPolinome.Power > secondPolinome.Power)
+            if (firstPolinome.power > secondPolinome.power)
             {
-                for (int i = 0; i < firstPolinome.Power; i++)
+                for (int i = 0; i < firstPolinome.power; i++)
                 {
-                    for (int j = 0; j < secondPolinome.Power; j++)
+                    for (int j = 0; j < secondPolinome.power; j++)
                     {
                         double index = firstPolinome.Index[i]*secondPolinome.Index[j];
                         mult[i + j] = mult[i + j] + index;
@@ -97,11 +91,11 @@ namespace Task2
                 }
                 
             }
-            if (firstPolinome.Power < secondPolinome.Power)
+            if (firstPolinome.power < secondPolinome.power)
             {
-                for (int i = 0; i < secondPolinome.Power; i++)
+                for (int i = 0; i < secondPolinome.power; i++)
                 {
-                    for (int j = 0; j < firstPolinome.Power; j++)
+                    for (int j = 0; j < firstPolinome.power; j++)
                     {
                         double index = firstPolinome.Index[i] * secondPolinome.Index[j];
                         mult[i + j] = mult[i + j] + index;
@@ -116,7 +110,7 @@ namespace Task2
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();
-            for (int i = Power; i >-1 ; i--)
+            for (int i = power; i >-1 ; i--)
             {
                 if (Index[i] != 0)
                 {
@@ -144,7 +138,29 @@ namespace Task2
 
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (ReferenceEquals(null,obj))
+            {
+                return false;
+            }
+            return Equals(obj as Polinome);
+        }
+
+        public bool Equals(Polinome polinom)
+        {
+            if (ReferenceEquals(null, polinom))
+                return false;
+            if(power!=polinom.power)
+                return false;
+            for(int i= 0;i< power; i++)
+            {
+                if (Index[i] != polinom.Index[i])
+                    return false;
+            } 
+            return true;
         }
     }
 }
