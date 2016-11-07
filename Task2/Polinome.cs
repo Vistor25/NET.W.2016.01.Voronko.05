@@ -197,7 +197,13 @@ namespace Task2
         /// <returns>HashCode of polinome.</returns>
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            int hashCode = 1;
+            int p = 17;
+            for (int i = 0; i < Index.Length; i++)
+            {
+                hashCode += p*Index[i].GetHashCode();
+            }
+            return hashCode;
         }
 
         /// <summary>
