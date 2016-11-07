@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -88,6 +89,8 @@ namespace Task2
         /// <returns>A new polinome.</returns>
         public static Polinome operator *(Polinome firstPolinome, Polinome secondPolinome)
         {
+            if (ReferenceEquals(firstPolinome, null)) throw new ArgumentNullException();
+            if (ReferenceEquals(secondPolinome, null)) throw new ArgumentNullException();
             int size = firstPolinome.power + secondPolinome.power;
             double[] mult = new double[size];
             
@@ -117,6 +120,17 @@ namespace Task2
             return firstPolinome * secondPolinome;
         }
 
+        public static bool operator ==(Polinome firstPolinome, Polinome secondPolinome)
+        {
+            if (ReferenceEquals(firstPolinome, secondPolinome)) return true;
+            if (ReferenceEquals(firstPolinome, null) || ReferenceEquals(secondPolinome, null)) return false;
+            return Equals(firstPolinome, secondPolinome);
+        }
+
+        public static bool operator !=(Polinome firstPolinome, Polinome secondPolinome)
+        {
+            return !(firstPolinome == secondPolinome);
+        }
         /// <summary>
         /// Override the ToString method of class polinome
         /// </summary>
@@ -169,7 +183,7 @@ namespace Task2
             {
                 return false;
             }
-            return Equals(obj as Polinome);
+            return obj.GetType() == GetType() && Equals((Polinome)obj);
         }
 
         public bool Equals(Polinome polinom)
@@ -180,7 +194,7 @@ namespace Task2
                 return false;
             for (int i = 0; i < power; i++)
             {
-                if (Index[i] != polinom.Index[i])
+                if (Index[i] != polinom[i])
                     return false;
             }
             return true;
