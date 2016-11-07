@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace Task2
 {
@@ -27,6 +28,22 @@ namespace Task2
 
         }
 
+        public int Power
+        {
+            get
+            {
+                if (Index.Length == 1)
+                    return 0;
+                int i;
+                for (i = Index.Length - 1; i >= 0; i--)
+                {
+                    if (Math.Abs(Index[i]) > Epsilon)
+                        break;
+                }
+
+                return i;
+            }
+        }
 
         public Polinome(params double[] coeff)
         {
@@ -38,6 +55,21 @@ namespace Task2
             coeff.CopyTo(Index, 0);
         }
 
+        static Polinome()
+        {
+            try
+            {
+                Epsilon = double.Parse(System.Configuration.ConfigurationManager.AppSettings["epsilon"]);
+            }
+            catch (ConfigurationErrorsException exeption)
+            {
+                throw new ConfigurationErrorsException("Can't get epsilon ", exeption);
+            }
+            catch (FormatException exception)
+            {
+                throw new ConfigurationErrorsException("Invalid format", exception);
+            }
+        }
         /// <summary>
         /// Override the addition method of class polinome 
         /// </summary>
