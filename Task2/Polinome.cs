@@ -6,20 +6,37 @@ using System.Threading.Tasks;
 
 namespace Task2
 {
-    public class Polinome
+    public sealed class Polinome : IEquatable<Polinome>, ICloneable
     {
-        private int power => index.Length;
-        private double[] index;
+        private int power;
+        private static double epsilon;
+        public double[] Index { get; private set; }
 
-        public double[] Index
+
+        public static double Epsilon
         {
-            get { return index; }
+            get { return epsilon; }
+            private set
+            {
+                if (value <= 0 || value >= 1)
+                    throw new ArgumentOutOfRangeException();
+
+                epsilon = value;
+            }
+
         }
 
-        public Polinome(params double[] index)
+
+        public Polinome(params double[] coeff)
         {
-            this.index = index;
+            if (ReferenceEquals(coeff, null))
+                throw new ArgumentNullException();
+            if (coeff.Length == 0)
+                throw new ArgumentOutOfRangeException();
+            Index = new double[coeff.Length];
+            coeff.CopyTo(Index, 0);
         }
+
         /// <summary>
         /// Override the addition method of class polinome 
         /// </summary>
@@ -28,30 +45,20 @@ namespace Task2
         /// <returns>A new polinome.</returns>
         public static Polinome operator +(Polinome firstPolinome, Polinome secondPolinome)
         {
+            if (ReferenceEquals(firstPolinome, null)) throw new ArgumentNullException();
+            if (ReferenceEquals(secondPolinome, null)) throw new ArgumentNullException();
             int size = Math.Max(firstPolinome.Index.Length, secondPolinome.Index.Length);
-            double[] sum = new double[size];
-            int border = Math.Min(firstPolinome.Index.Length, secondPolinome.Index.Length) - 1;
-            for (int i = 0; i < border; i++)
+            Polinome polinome = firstPolinome.power >= secondPolinome.power
+                ? firstPolinome.Clone()
+                : secondPolinome.Clone();
+            for (int i = 0; i < size; i++)
             {
-                sum[i] = firstPolinome.Index[i] + secondPolinome.Index[i];
+                polinome[i] += firstPolinome.power >= secondPolinome.power ? secondPolinome[i] : firstPolinome[i];
             }
-            if (firstPolinome.Index.Length > secondPolinome.Index.Length)
-            {
-                for (int i = border; i < size - 1; i++)
-                {
-                    sum[i] = firstPolinome.Index[i];
-                }
-            }
-            if (firstPolinome.Index.Length < secondPolinome.Index.Length)
-            {
-                for (int i = border; i < size - 1; i++)
-                {
-                    sum[i] = secondPolinome.Index[i];
-                }
-            }
-            return new Polinome(sum);
+            return polinome;
 
         }
+
         /// <summary>
         /// Override the substraction method of class poinome
         /// </summary>
@@ -60,30 +67,19 @@ namespace Task2
         /// <returns>A new polinome.</returns>
         public static Polinome operator -(Polinome firstPolinome, Polinome secondPolinome)
         {
+            if(ReferenceEquals(firstPolinome,null)) throw new ArgumentNullException();
+            if(ReferenceEquals(secondPolinome,null)) throw new ArgumentNullException();
             int size = Math.Max(firstPolinome.Index.Length, secondPolinome.Index.Length);
-            double[] sum = new double[size];
-            int border = Math.Min(firstPolinome.Index.Length, secondPolinome.Index.Length) - 1;
-            for (int i = 0; i < border; i++)
+            Polinome polinome = firstPolinome.power >= secondPolinome.power
+                ? firstPolinome.Clone()
+                : secondPolinome.Clone();
+            for (int i = 0; i < size; i++)
             {
-                sum[i] = firstPolinome.Index[i] - secondPolinome.Index[i];
+                polinome[i] -= firstPolinome.power >= secondPolinome.power ? secondPolinome[i] : firstPolinome[i];
             }
-            if (firstPolinome.Index.Length > secondPolinome.Index.Length)
-            {
-                for (int i = border; i < size - 1; i++)
-                {
-                    sum[i] = firstPolinome.Index[i];
-                }
-            }
-            if (firstPolinome.Index.Length < secondPolinome.Index.Length)
-            {
-                for (int i = border; i < size - 1; i++)
-                {
-                    sum[i] = secondPolinome.Index[i];
-                }
-            }
-            return new Polinome(sum);
-
+            return polinome;
         }
+
         /// <summary>
         /// Override the multiply method of class poinome
         /// </summary>
@@ -94,34 +90,33 @@ namespace Task2
         {
             int size = firstPolinome.power + secondPolinome.power;
             double[] mult = new double[size];
-            if (firstPolinome.power > secondPolinome.power)
-            {
-                for (int i = 0; i < firstPolinome.power; i++)
+            
+            for (int i = 0; i < firstPolinome.power; i++)
                 {
                     for (int j = 0; j < secondPolinome.power; j++)
                     {
-                        double index = firstPolinome.Index[i] * secondPolinome.Index[j];
+                        double index = firstPolinome.Index[i]*secondPolinome.Index[j];
                         mult[i + j] = mult[i + j] + index;
                     }
 
                 }
 
-            }
-            if (firstPolinome.power < secondPolinome.power)
-            {
-                for (int i = 0; i < secondPolinome.power; i++)
-                {
-                    for (int j = 0; j < firstPolinome.power; j++)
-                    {
-                        double index = firstPolinome.Index[i] * secondPolinome.Index[j];
-                        mult[i + j] = mult[i + j] + index;
-                    }
-
-                }
-
-            }
-            return new Polinome(mult);
+           return new Polinome(mult);
         }
+
+        public static Polinome Add(Polinome firstPolinome, Polinome secondPolinome)
+        {
+            return firstPolinome + secondPolinome;
+        }
+        public static Polinome Substract(Polinome firstPolinome, Polinome secondPolinome)
+        {
+            return firstPolinome - secondPolinome;
+        }
+        public static Polinome Multiply(Polinome firstPolinome, Polinome secondPolinome)
+        {
+            return firstPolinome * secondPolinome;
+        }
+
         /// <summary>
         /// Override the ToString method of class polinome
         /// </summary>
@@ -149,6 +144,7 @@ namespace Task2
             }
             return result.ToString();
         }
+
         /// <summary>
         /// Override the GetHashCode method of polinome
         /// </summary>
@@ -157,6 +153,7 @@ namespace Task2
         {
             return ToString().GetHashCode();
         }
+
         /// <summary>
         /// Override the Equals method of polinome
         /// </summary>
@@ -187,6 +184,32 @@ namespace Task2
                     return false;
             }
             return true;
+        }
+
+        public Polinome Clone()
+        {
+            return new Polinome(Index);
+        }
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
+
+        public double this[int i]
+        {
+            get
+            {
+                if (i < 0 || i > power)
+                    throw new ArgumentOutOfRangeException();
+                return Index[i];
+            }
+            private set
+            {
+                if (i < 0 || i > power)
+                    throw new ArgumentOutOfRangeException();
+                Index[i] = value;
+            }
+
         }
     }
 }
